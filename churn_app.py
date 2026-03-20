@@ -26,7 +26,7 @@ import plotly.graph_objects as go
 # ----------------------------------------------------------
 #  FOLDER -- change to your folder
 # ----------------------------------------------------------
-FOLDER = r"F:\stud_churn"
+FOLDER = r"stud_churn"
 # ----------------------------------------------------------
 
 st.set_page_config(
