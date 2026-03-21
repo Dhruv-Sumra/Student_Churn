@@ -5,10 +5,15 @@ import numpy as np
 import joblib, os, warnings
 warnings.filterwarnings("ignore")
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import (accuracy_score, f1_score, roc_auc_score,
-                             confusion_matrix, classification_report,
-                             roc_curve, precision_score, recall_score)
+# Lazy import heavy libraries only when needed
+def lazy_import_sklearn():
+    global train_test_split, accuracy_score, f1_score, roc_auc_score
+    global confusion_matrix, classification_report, roc_curve, precision_score, recall_score
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import (accuracy_score, f1_score, roc_auc_score,
+                                 confusion_matrix, classification_report,
+                                 roc_curve, precision_score, recall_score)
+
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -266,6 +271,8 @@ def load_model():
 
 @st.cache_data
 def get_test_set(feats_tuple):
+    # Lazy import sklearn here
+    from sklearn.model_selection import train_test_split
     raw   = load_raw()
     df    = rebuild_features(raw)
     df["is_churned"] = raw["is_churned"].values
@@ -285,7 +292,8 @@ try:
     # Use adaptive semester weighting for test set predictions
     all_probs  = np.array([apply_semester_signal(p, s) for p, s in zip(base_probs, sem_test.values)])
     all_preds  = (all_probs >= thresh).astype(int)
-    # Calculate actual metrics
+    # Calculate actual metrics - lazy import sklearn
+    lazy_import_sklearn()
     ACTUAL_ACC = accuracy_score(y_test, all_preds)
     ACTUAL_AUC = roc_auc_score(y_test, all_probs)
     ACTUAL_F1 = f1_score(y_test, all_preds, zero_division=0)
