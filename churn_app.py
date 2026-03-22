@@ -15,7 +15,7 @@ def lazy_import_sklearn():
 import plotly.express as px
 import plotly.graph_objects as go
 
-FOLDER = r"F:\stud_churn"
+FOLDER = r""
 
 st.set_page_config(page_title="BCA Churn Analysis", layout="wide",
                    initial_sidebar_state="expanded")
