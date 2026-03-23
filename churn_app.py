@@ -1264,6 +1264,17 @@ elif "Model" in page:
         section_header("Predict Churn Risk for a Student",
                         "32 admission features + adaptive semester signal")
 
+        # College selection outside form for dynamic semester update
+        st.markdown(f"""<div style='background:{NAVY};color:{GOLD};font-size:12px;font-weight:700;
+             letter-spacing:1.2px;padding:9px 14px;text-transform:uppercase;margin-bottom:8px'>
+          SELECT COLLEGE FIRST</div>""", unsafe_allow_html=True)
+        
+        college = st.selectbox("College",["BPCCS  (Rs.18,000)","SVICS-G  (Rs.27,000)"],key="college_select_main")
+        college_key = "BPCCS" if "BPCCS" in college else "SVICS-G"
+        available_sems = COLLEGE_SEMESTERS[college_key]
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+
         with st.form("predict_form"):
             st.markdown(f"""<div style='background:{NAVY};color:{GOLD};font-size:12px;font-weight:700;
                  letter-spacing:1.2px;padding:9px 14px;text-transform:uppercase;margin-bottom:4px'>
@@ -1271,9 +1282,9 @@ elif "Model" in page:
 
             form_label("Institute & Academic Background")
             g1a,g1b,g1c=st.columns(3)
-            college   =g1a.selectbox("College",["BPCCS  (Rs.18,000)","SVICS-G  (Rs.27,000)"])
-            college_key = "BPCCS" if "BPCCS" in college else "SVICS-G"
-            available_sems = COLLEGE_SEMESTERS[college_key]
+            # Display selected college (read-only)
+            g1a.markdown(f"""<div style='font-size:13px;color:#666;margin-bottom:4px'>Selected College</div>
+                <div style='background:#F0F0F0;padding:8px;border-radius:4px;font-weight:600;color:{NAVY}'>{college}</div>""", unsafe_allow_html=True)
             year_gap  =g1b.selectbox("Years Since 12th",[1,2,3,4,5])
             exam_pct  =g1c.number_input("HSC Percentage (%)",min_value=0.0,max_value=100.0,
                 value=61.5,step=0.5)
