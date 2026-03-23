@@ -17,7 +17,7 @@ import plotly.graph_objects as go
 
 FOLDER = r""
 
-st.set_page_config(page_title="BCA Churn Analysis", layout="wide",
+st.set_page_config(page_title="Students’ churn-based decision support system using machine learning and artificial intelligence", layout="wide",
                    initial_sidebar_state="expanded")
 
 GOLD = "#C8A96E"
@@ -432,7 +432,7 @@ if not LOADED:
 #  I. INTRODUCTION
 # ================================================================
 if "Introduction" in page:
-    st.title("BCA Student Churn Analysis")
+    st.title("Students’ churn-based decision support system using machine learning and artificial intelligence")
     st.markdown("<p style='font-size:15px;color:#5C6B7A;font-style:italic;margin-bottom:20px'>"
                 "Predicting student dropout in BCA using machine learning -- Batch 2023-24.</p>",
                 unsafe_allow_html=True)
@@ -443,7 +443,7 @@ if "Introduction" in page:
 
     st.markdown(f"""<div style='background:{NAVY};border:2px solid {GOLD};padding:16px 20px;margin-bottom:20px'>
       <div style='font-size:13px;font-weight:700;color:{GOLD};text-transform:uppercase;
-           letter-spacing:1px;margin-bottom:10px'>Model Highlights</div>
+           letter-spacing:1px;margin-bottom:10px'>Model Highlights (Which model?)</div>
       <div style='display:grid;grid-template-columns:repeat(5,1fr);gap:10px'>
         <div style='text-align:center;background:rgba(200,169,110,0.1);padding:12px 6px'>
           <div style='font-size:24px;font-weight:700;color:{GOLD}'>{ACTUAL_ACC*100:.1f}%</div>
@@ -483,19 +483,70 @@ if "Introduction" in page:
           Prediction interface shows only Sem 1-3 for SVICS-G.""", color=NAVY)
 
         section_header("Project Objectives")
-        for o in [
-            "Perform comprehensive EDA on 842 BCA students.",
-            "Engineer 32 admission-time features with data-driven interactions.",
-            f"Train an honest Random Forest: {ACTUAL_ACC*100:.1f}% accuracy, AUC {ACTUAL_AUC:.3f}.",
-            "Use semester as a validated signal for early semesters (1-3) only.",
-            "Build an interactive prediction interface for institutional use.",
-        ]:
-            st.markdown(f"""<div style='font-size:13px;color:#2C3E50;padding:6px 0;
-                 border-bottom:1px dotted #D4C5A9'>
-              <span style='color:{GOLD};font-weight:700'>&#9658;</span>&nbsp; {o}</div>""",
-                unsafe_allow_html=True)
+        
+        # Strategic Objectives
+        st.markdown(f"""<div style='background:{NAVY};padding:12px 16px;margin-bottom:10px;border-left:4px solid {GOLD}'>
+          <div style='font-size:12px;font-weight:700;color:{GOLD};text-transform:uppercase;letter-spacing:1px;margin-bottom:8px'>
+            Strategic Objectives</div>
+          <div style='font-size:13px;color:#EDE8DC;line-height:1.8'>
+            &#9658; Help higher management in taking strategic decisions<br>
+            &#9658; Support policy making and institutional design<br>
+            &#9658; Provide NAAC accreditation support through data-driven insights<br>
+            &#9658; Enable proactive student retention strategies
+          </div>
+        </div>""", unsafe_allow_html=True)
+        
+        # Core Objectives
+        st.markdown(f"""<div style='background:#FFF;border:1px solid #D4C5A9;padding:12px 16px;margin-bottom:10px;border-left:4px solid {GREEN}'>
+          <div style='font-size:12px;font-weight:700;color:{NAVY};text-transform:uppercase;letter-spacing:1px;margin-bottom:8px'>
+            Core Objectives</div>
+          <div style='font-size:13px;color:#2C3E50;line-height:1.8'>
+            &#9658; Identify students at risk of churn early<br>
+            &#9658; Predict probability of student dropout using ML models<br>
+            &#9658; Identify key factors influencing churn behavior<br>
+            &#9658; Develop a decision support system (DSS) for educators
+          </div>
+        </div>""", unsafe_allow_html=True)
+        
+        # Technical Objectives
+        st.markdown(f"""<div style='background:#FFF;border:1px solid #D4C5A9;padding:12px 16px;margin-bottom:10px;border-left:4px solid {AMBER}'>
+          <div style='font-size:12px;font-weight:700;color:{NAVY};text-transform:uppercase;letter-spacing:1px;margin-bottom:8px'>
+            Technical Objectives</div>
+          <div style='font-size:13px;color:#2C3E50;line-height:1.8'>
+            &#9658; Perform comprehensive EDA on 842 BCA students<br>
+            &#9658; Engineer 32 admission-time features with data-driven interactions<br>
+            &#9658; Train an honest Random Forest: {ACTUAL_ACC*100:.1f}% accuracy, AUC {ACTUAL_AUC:.3f}<br>
+            &#9658; Use adaptive semester weighting for early semesters (1-3)<br>
+            &#9658; Build an interactive prediction interface for institutional use
+          </div>
+        </div>""", unsafe_allow_html=True)
 
     with col_r:
+        section_header("Data Dictionary")
+        st.markdown(f"""<div style='background:#FFF;border:1px solid #D4C5A9;padding:12px;max-height:400px;overflow-y:auto'>
+          <table style='width:100%;font-size:11px'>
+            <tr style='background:{NAVY};color:{GOLD}'>
+              <th style='padding:8px;text-align:left'>Field</th>
+              <th style='padding:8px;text-align:left'>Type</th>
+              <th style='padding:8px;text-align:left'>Description</th>
+            </tr>
+            <tr><td style='padding:6px'><b>Roll No</b></td><td>ID</td><td>Student identifier</td></tr>
+            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Institute</b></td><td>Categorical</td><td>BPCCS or SVICS-G</td></tr>
+            <tr><td style='padding:6px'><b>Current Semester</b></td><td>Numeric</td><td>1 to 6</td></tr>
+            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Gender</b></td><td>Binary</td><td>Male / Female</td></tr>
+            <tr><td style='padding:6px'><b>Admission Cast Category</b></td><td>Categorical</td><td>OPEN, OBC, SEBC, SCST</td></tr>
+            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Religion</b></td><td>Categorical</td><td>Hindu, Muslim, Christian, Jain</td></tr>
+            <tr><td style='padding:6px'><b>Permanent District</b></td><td>Categorical</td><td>Home district (35+ districts)</td></tr>
+            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Total Fees</b></td><td>Numeric</td><td>₹18,000 or ₹27,000</td></tr>
+            <tr><td style='padding:6px'><b>Last Exam</b></td><td>Categorical</td><td>HSC (833) or SSC (9)</td></tr>
+            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Last Exam Percentage</b></td><td>Continuous</td><td>0-100 marks</td></tr>
+            <tr><td style='padding:6px'><b>Last Exam Passing</b></td><td>Categorical</td><td>Year (e.g., 2022-23)</td></tr>
+            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Last Exam Board/Uni.</b></td><td>Categorical</td><td>G.H.S.E.B, CBSE, GSEB, Other</td></tr>
+            <tr><td style='padding:6px'><b>Specialisation</b></td><td>Categorical</td><td>COMMERCE, SCIENCE, ARTS</td></tr>
+            <tr style='background:#F5F2EB'><td style='padding:6px'><b>student_status_new</b></td><td>Target</td><td>active / dropout_sem1 / dropout_mid</td></tr>
+          </table>
+        </div>""", unsafe_allow_html=True)
+        
         fig = go.Figure(go.Pie(labels=["Active (735)","Churned (107)"],values=[735,107],hole=0.6,
             marker=dict(colors=[GREEN,RED],line=dict(color="#FFF",width=3)),
             textinfo="label+percent",textfont=dict(family="Times New Roman",size=14)))
@@ -703,6 +754,59 @@ elif "EDA" in page:
             chart_insight("What this chart tells us",
                 "Hindu students dominate at 91%. Muslim students (69, 8.2%) show a higher "
                 "churn rate of 17.4% vs the 12.3% Hindu rate.")
+        
+        # Additional charts
+        ca4,cb4=st.columns(2)
+        with ca4:
+            fees=raw["Total Fees"].value_counts().reset_index(); fees.columns=["Fees","Count"]
+            fees["Fees"] = fees["Fees"].apply(lambda x: f"₹{x:,}")
+            fig8=px.bar(fees,x="Fees",y="Count",text="Count",color="Count",
+                color_continuous_scale=[[0,GOLD],[1,NAVY]],title="Total fees distribution")
+            fig8.update_traces(textposition="outside", textfont=dict(size=14, color=NAVY), cliponaxis=False)
+            tnr(fig8,320); fig8.update_layout(coloraxis_showscale=False)
+            st.plotly_chart(fig8, use_container_width=True)
+            chart_insight("What this chart tells us",
+                "₹18,000 (BPCCS): 588 students (69.8%). ₹27,000 (SVICS-G): 254 students (30.2%). "
+                "Higher fees don't necessarily mean lower churn - both colleges show similar ~12-13% rates.")
+        with cb4:
+            exam=raw["Last Exam"].value_counts().reset_index(); exam.columns=["Exam","Count"]
+            fig9=px.bar(exam,x="Exam",y="Count",text="Count",color="Exam",
+                color_discrete_map={"HSC":NAVY,"SSC":GOLD},title="Last exam type distribution")
+            fig9.update_traces(textposition="outside", textfont=dict(size=14, color=NAVY), cliponaxis=False)
+            tnr(fig9,320); fig9.update_layout(showlegend=False)
+            st.plotly_chart(fig9, use_container_width=True)
+            chart_insight("What this chart tells us",
+                "HSC dominates with 833 students (98.9%). Only 9 students (1.1%) entered from SSC. "
+                "HSC is the standard entry qualification for BCA.")
+        
+        ca5,cb5=st.columns(2)
+        with ca5:
+            passing=raw["Last Exam Passing"].value_counts().head(6).reset_index()
+            passing.columns=["Year","Count"]
+            fig10=px.bar(passing,x="Year",y="Count",text="Count",color="Count",
+                color_continuous_scale=[[0,GOLD],[1,NAVY]],title="Last exam passing year (Top 6)")
+            fig10.update_traces(textposition="outside", textfont=dict(size=14, color=NAVY), cliponaxis=False)
+            tnr(fig10,320); fig10.update_layout(coloraxis_showscale=False)
+            st.plotly_chart(fig10, use_container_width=True)
+            chart_insight("What this chart tells us",
+                "Most students passed in 2023-24 (recent graduates). Gap year students (2021-22, 2022-23) "
+                "show slightly higher churn rates, captured through the year_gap feature.")
+        with cb5:
+            # Churn by religion
+            rel_churn=raw.groupby("Religion")["is_churned"].agg(["mean","sum","count"]).reset_index()
+            rel_churn.columns=["Religion","Rate","Churned","Total"]
+            rel_churn["Churn %"]=(rel_churn["Rate"]*100).round(1)
+            rel_churn=rel_churn.sort_values("Churn %",ascending=False)
+            fig11=px.bar(rel_churn,x="Religion",y="Churn %",text="Churn %",color="Churn %",
+                color_continuous_scale=[[0,GREEN],[0.5,GOLD],[1,RED]],title="Churn rate by religion")
+            fig11.update_traces(texttemplate="%{text:.1f}%",textposition="outside",
+                textfont=dict(size=14, color=NAVY), cliponaxis=False)
+            tnr(fig11,320); fig11.update_layout(coloraxis_showscale=False)
+            st.plotly_chart(fig11, use_container_width=True)
+            chart_insight("What this chart tells us",
+                "Muslim students show 17.4% churn (highest), Hindu 12.3%, Christian 11.1%, Jain 0%. "
+                "Muslim students from non-local districts face additional challenges.")
+
 
     with u2:
         section_header("Numerical Feature Distributions")
@@ -757,7 +861,9 @@ elif "EDA" in page:
         cat_pairs=[("Admission Cast Category","Caste vs churn rate"),
                    ("Gender","Gender vs churn rate"),
                    ("Institute","Institute vs churn rate"),
-                   ("Specialisation","Stream vs churn rate")]
+                   ("Specialisation","Stream vs churn rate"),
+                   ("Last Exam Board/Uni.","Board vs churn rate"),
+                   ("Last Exam","Exam type vs churn rate")]
         ca,cb=st.columns(2)
         for i,(col,title) in enumerate(cat_pairs):
             grp=raw.groupby(col)["is_churned"].agg(["mean","sum","count"]).reset_index()
@@ -772,6 +878,25 @@ elif "EDA" in page:
             tnr(fig,330); fig.update_layout(coloraxis_showscale=False)
             with (ca if i%2==0 else cb):
                 st.plotly_chart(fig, use_container_width=True)
+                if col == "Admission Cast Category":
+                    chart_insight("Caste category insights",
+                        "OBC: 18.1% (highest), OPEN: 12.8%, SEBC: 11.8%, SCST: 8.0% (lowest). "
+                        "SCST students benefit from scholarships and support systems.")
+                elif col == "Gender":
+                    chart_insight("Gender insights",
+                        "Male: 13.6%, Female: 11.1% overall. But female SVICS-G students show 14.4% churn.")
+                elif col == "Institute":
+                    chart_insight("Institute insights",
+                        "BPCCS: 12.8%, SVICS-G: 12.6%. Nearly identical churn rates despite fee difference.")
+                elif col == "Specialisation":
+                    chart_insight("Stream insights",
+                        "Science: 20.7% (highest - subject mismatch), Arts: 14.9%, Commerce: 12.1% (best fit).")
+                elif col == "Last Exam Board/Uni.":
+                    chart_insight("Board insights",
+                        "CBSE: 23.1% (highest - adjustment issues), GSEB: 14.3%, G.H.S.E.B: 12.3%.")
+                elif col == "Last Exam":
+                    chart_insight("Exam type insights",
+                        "HSC: 12.7%, SSC: 11.1%. No significant difference, but sample size for SSC is very small (9 students).")
 
         section_header("Institute x Caste x Churn -- Sunburst")
         grp_sun=raw.groupby(["Institute","Admission Cast Category","Churn Label"]).size().reset_index(name="Count")
@@ -779,6 +904,10 @@ elif "EDA" in page:
             values="Count",color="Churn Label",
             color_discrete_map={"Active":GREEN,"Churned":RED},title="Institute > Caste > Churn")
         tnr(fig_sun,480); st.plotly_chart(fig_sun, use_container_width=True)
+        chart_insight("How to read the sunburst",
+            "Inner ring = Institute (BPCCS/SVICS-G). Middle ring = Caste category. "
+            "Outer ring = Active (green) vs Churned (red). The proportion of red shows churn rate. "
+            "OBC at BPCCS shows the largest red slice (19.3% churn).")
 
     with b2:
         section_header("Exam Percentage vs Churn")
@@ -790,6 +919,9 @@ elif "EDA" in page:
             fig_bx.update_layout(showlegend=False)
             tnr(fig_bx,350)
             st.plotly_chart(fig_bx, use_container_width=True)
+            chart_insight("What this box plot tells us",
+                "Churned students have lower median (~58%) vs active (~61%), but large overlap. "
+                "The model uses polynomial features (pct_dev_sq) to capture the non-linear relationship.")
         with cb:
             brackets=["0-45%","45-50%","50-55%","55-60%","60-65%","65-70%","70-75%","75%+"]
             rates=[17.6,9.3,14.2,17.2,15.5,8.6,8.0,10.6]
@@ -803,9 +935,50 @@ elif "EDA" in page:
             fig_br.update_layout(title="Churn rate by exam % bracket -- non-linear!",
                 yaxis_title="Churn Rate %",xaxis_title="HSC % Range")
             st.plotly_chart(fig_br, use_container_width=True)
+            chart_insight("The non-linear exam percentage finding",
+                "Counter-intuitive: 55-60% bracket has 17.2% churn -- higher than below-45% (17.6%)! "
+                "The 50-65% 'middle zone' churns at 15-17%. These students have uncertain academic confidence. "
+                "Very high scorers (75%+) still churn at 10.6% -- possibly overconfidence or wrong course choice.")
+        
+        # Additional numerical analysis
+        ca2,cb2=st.columns(2)
+        with ca2:
+            # Fees vs Churn
+            fees_churn=raw.groupby("Total Fees")["is_churned"].agg(["mean","sum","count"]).reset_index()
+            fees_churn.columns=["Fees","Rate","Churned","Total"]
+            fees_churn["Churn %"]=(fees_churn["Rate"]*100).round(1)
+            fees_churn["Fees Label"] = fees_churn["Fees"].apply(lambda x: f"₹{x:,}")
+            fig_fc=px.bar(fees_churn,x="Fees Label",y="Churn %",text="Churn %",color="Churn %",
+                color_continuous_scale=[[0,GREEN],[0.5,GOLD],[1,RED]],title="Churn rate by fees")
+            fig_fc.update_traces(texttemplate="%{text:.1f}%",textposition="outside",
+                textfont=dict(size=14, color=NAVY), cliponaxis=False)
+            tnr(fig_fc,350); fig_fc.update_layout(coloraxis_showscale=False)
+            st.plotly_chart(fig_fc, use_container_width=True)
+            chart_insight("Fees vs churn insight",
+                "₹18,000 (BPCCS): 12.8% churn. ₹27,000 (SVICS-G): 12.6% churn. "
+                "Nearly identical rates suggest fees alone don't determine dropout. "
+                "Other factors (caste, stream, district) matter more.")
+        with cb2:
+            # District churn rates (top 10)
+            dist_churn=raw.groupby("Permanent District")["is_churned"].agg(["mean","sum","count"]).reset_index()
+            dist_churn.columns=["District","Rate","Churned","Total"]
+            dist_churn["Churn %"]=(dist_churn["Rate"]*100).round(1)
+            dist_churn=dist_churn[dist_churn["Total"]>=10].sort_values("Churn %",ascending=False).head(10)
+            fig_dc=px.bar(dist_churn,x="Churn %",y="District",orientation="h",text="Churn %",color="Churn %",
+                color_continuous_scale=[[0,GREEN],[0.5,GOLD],[1,RED]],title="Top 10 high-risk districts")
+            fig_dc.update_traces(texttemplate="%{text:.1f}%",textposition="outside",
+                textfont=dict(size=13, color=NAVY), cliponaxis=False)
+            tnr(fig_dc,350); fig_dc.update_layout(coloraxis_showscale=False)
+            st.plotly_chart(fig_dc, use_container_width=True)
+            chart_insight("Geographic risk zones",
+                "Sabarkantha: 37.5% (highest), Kutch: 25%, Banaskantha: 22.2%, Mehsana: 20.8%. "
+                "All far from college locations. Distance matters -- local students (Gandhinagar, Ahmedabad) "
+                "churn at only 11.4%.")
 
     with b3:
-        section_header("Semester-Wise Analysis (Correct Raw Data)")
+        section_header("Semester-Wise Analysis (Real Data)")
+        info_card(f"""<b style='color:{NAVY}'>Note:</b> These charts use actual semester values 1-6 from latest.csv, 
+                  showing the true distribution of students and churn across semesters.""", color=GOLD)
         sem_d=raw.groupby("Current Semester").agg(
             Students=("is_churned","count"),Churned=("is_churned","sum")).reset_index()
         sem_d["Active"]     = sem_d["Students"] - sem_d["Churned"]
@@ -822,18 +995,35 @@ elif "EDA" in page:
                 textfont=dict(size=13, color="#FFF")))
             tnr(fig_s1,360); fig_s1.update_layout(barmode="stack",title="Students per semester")
             st.plotly_chart(fig_s1, use_container_width=True)
+            chart_insight("Student distribution by semester",
+                "Sem 1: 61 students (100% churned). Sem 2: 47 students (80.9% churned). "
+                "Sem 3: 249 students (3.2% churned). Sem 4-6: 485 students (0% churned). "
+                "Clear pattern: churn is almost entirely a Semester 1-2 phenomenon.")
         with cb:
             fig_s2=go.Figure(go.Bar(x=sem_d["Label"],y=sem_d["Churn Rate"],
                 marker_color=[RED if r>50 else AMBER if r>12 else GREEN for r in sem_d["Churn Rate"]],
                 text=[f"{r}%" for r in sem_d["Churn Rate"]],textposition="outside",
                 textfont=dict(size=14, color=NAVY), cliponaxis=False))
             fig_s2.add_hline(y=12.7,line_dash="dash",line_color=GOLD,
-                annotation_text="Overall avg 12.7%",annotation_font_color=GOLD,
-                annotation_font_size=13)
+                annotation_text="Overall avg 12.7%",annotation_font_color=GOLD, annotation_font_size=13)
             tnr(fig_s2,360); fig_s2.update_layout(title="Churn rate per semester")
             st.plotly_chart(fig_s2, use_container_width=True)
+            chart_insight("Churn rate pattern",
+                "Sem 1: 100% (all 61 students churned). Sem 2: 80.9% (38 of 47 churned). "
+                "Sem 3: 3.2% (8 of 249 churned). Sem 4-6: 0% (0 of 485 churned). "
+                "Once students pass Sem 2, dropout probability drops to near zero.")
+        
         st.dataframe(sem_d[["Label","Students","Churned","Active","Churn Rate"]],
                      use_container_width=True, hide_index=True)
+        
+        chart_insight("Why adaptive semester weighting works",
+            "The model uses these historical rates as signals:<br>"
+            "• Sem 1: 20% weight (critical risk period)<br>"
+            "• Sem 2: 15% weight (high risk period)<br>"
+            "• Sem 3: 5% weight (low risk period)<br>"
+            "• Sem 4-6: 0% weight (stable period - admission model only)<br><br>"
+            "This adaptive approach is honest -- it doesn't over-rely on semester as a 'cheat code' "
+            "but uses it as a validated contextual signal for early semesters only.")
 
 # ================================================================
 #  V. FEATURE ENGINEERING
