@@ -443,7 +443,7 @@ if "Introduction" in page:
 
     st.markdown(f"""<div style='background:{NAVY};border:2px solid {GOLD};padding:16px 20px;margin-bottom:20px'>
       <div style='font-size:13px;font-weight:700;color:{GOLD};text-transform:uppercase;
-           letter-spacing:1px;margin-bottom:10px'>Model Highlights (Which model?)</div>
+           letter-spacing:1px;margin-bottom:10px'>Model Highlights - {type(model).__name__}</div>
       <div style='display:grid;grid-template-columns:repeat(5,1fr);gap:10px'>
         <div style='text-align:center;background:rgba(200,169,110,0.1);padding:12px 6px'>
           <div style='font-size:24px;font-weight:700;color:{GOLD}'>{ACTUAL_ACC*100:.1f}%</div>
@@ -523,27 +523,104 @@ if "Introduction" in page:
 
     with col_r:
         section_header("Data Dictionary")
-        st.markdown(f"""<div style='background:#FFF;border:1px solid #D4C5A9;padding:12px;max-height:400px;overflow-y:auto'>
-          <table style='width:100%;font-size:11px'>
-            <tr style='background:{NAVY};color:{GOLD}'>
-              <th style='padding:8px;text-align:left'>Field</th>
-              <th style='padding:8px;text-align:left'>Type</th>
-              <th style='padding:8px;text-align:left'>Description</th>
+        st.markdown(f"""<div style='background:#FFF;border:1px solid #D4C5A9;padding:12px;max-height:450px;overflow-y:auto'>
+          <table style='width:100%;font-size:10px;border-collapse:collapse'>
+            <tr style='background:{NAVY};color:{GOLD};position:sticky;top:0'>
+              <th style='padding:6px;text-align:left;border:1px solid #ddd'>Field Name</th>
+              <th style='padding:6px;text-align:left;border:1px solid #ddd'>Type</th>
+              <th style='padding:6px;text-align:left;border:1px solid #ddd'>Description</th>
             </tr>
-            <tr><td style='padding:6px'><b>Roll No</b></td><td>ID</td><td>Student identifier</td></tr>
-            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Institute</b></td><td>Categorical</td><td>BPCCS or SVICS-G</td></tr>
-            <tr><td style='padding:6px'><b>Current Semester</b></td><td>Numeric</td><td>1 to 6</td></tr>
-            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Gender</b></td><td>Binary</td><td>Male / Female</td></tr>
-            <tr><td style='padding:6px'><b>Admission Cast Category</b></td><td>Categorical</td><td>OPEN, OBC, SEBC, SCST</td></tr>
-            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Religion</b></td><td>Categorical</td><td>Hindu, Muslim, Christian, Jain</td></tr>
-            <tr><td style='padding:6px'><b>Permanent District</b></td><td>Categorical</td><td>Home district (35+ districts)</td></tr>
-            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Total Fees</b></td><td>Numeric</td><td>₹18,000 or ₹27,000</td></tr>
-            <tr><td style='padding:6px'><b>Last Exam</b></td><td>Categorical</td><td>HSC (833) or SSC (9)</td></tr>
-            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Last Exam Percentage</b></td><td>Continuous</td><td>0-100 marks</td></tr>
-            <tr><td style='padding:6px'><b>Last Exam Passing</b></td><td>Categorical</td><td>Year (e.g., 2022-23)</td></tr>
-            <tr style='background:#F5F2EB'><td style='padding:6px'><b>Last Exam Board/Uni.</b></td><td>Categorical</td><td>G.H.S.E.B, CBSE, GSEB, Other</td></tr>
-            <tr><td style='padding:6px'><b>Specialisation</b></td><td>Categorical</td><td>COMMERCE, SCIENCE, ARTS</td></tr>
-            <tr style='background:#F5F2EB'><td style='padding:6px'><b>student_status_new</b></td><td>Target</td><td>active / dropout_sem1 / dropout_mid</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Sr No</b></td><td>Numeric</td><td>Serial number</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Roll No</b></td><td>ID</td><td>Unique student identifier</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Temp Student</b></td><td>Binary</td><td>Temporary student flag</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Student Name</b></td><td>Text</td><td>Full name of student</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>First Name</b></td><td>Text</td><td>Student's first name</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Middle Name</b></td><td>Text</td><td>Student's middle name</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Last Name</b></td><td>Text</td><td>Student's last name</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Institute</b></td><td>Categorical</td><td>BPCCS or SVICS-G</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Degree</b></td><td>Categorical</td><td>BCA degree program</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Program Medium</b></td><td>Categorical</td><td>English/Gujarati medium</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Program Group</b></td><td>Categorical</td><td>Academic group classification</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Admission Year</b></td><td>Numeric</td><td>Year of admission</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Admission Semester</b></td><td>Numeric</td><td>Semester at admission (1-6)</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Admission Term</b></td><td>Categorical</td><td>Odd/Even term</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Current Semester</b></td><td>Numeric</td><td>Current semester (1-6)</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Semester</b></td><td>Numeric</td><td>Semester number</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Admission Date</b></td><td>Date</td><td>Date of admission</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Registration Date</b></td><td>Date</td><td>University registration date</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Is D2D</b></td><td>Binary</td><td>Direct to degree flag</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Gender</b></td><td>Binary</td><td>Male/Female</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Birth Date</b></td><td>Date</td><td>Date of birth</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Admission Cast</b></td><td>Categorical</td><td>Caste at admission</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Actual Caste Category</b></td><td>Categorical</td><td>OPEN, OBC, SEBC, SCST</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>ACPC Rank</b></td><td>Numeric</td><td>Admission committee rank</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Gujcat Num</b></td><td>Text</td><td>Gujarat Common Admission Test number</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Mother Name</b></td><td>Text</td><td>Mother's full name</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Birth Place</b></td><td>Text</td><td>Place of birth</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Birth Place District</b></td><td>Categorical</td><td>District of birth</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Birth Place State</b></td><td>Categorical</td><td>State of birth</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Subcast</b></td><td>Categorical</td><td>Sub-caste category</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Religion</b></td><td>Categorical</td><td>Hindu, Muslim, Christian, Jain</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Mother Tongue</b></td><td>Categorical</td><td>Primary language</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Nationality</b></td><td>Categorical</td><td>Country of citizenship</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Local Address</b></td><td>Text</td><td>Current residential address</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Local City</b></td><td>Categorical</td><td>Current city</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Local Pincode</b></td><td>Numeric</td><td>Current area pincode</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Local District</b></td><td>Categorical</td><td>Current district</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Local Taluka</b></td><td>Categorical</td><td>Current taluka/tehsil</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Local State</b></td><td>Categorical</td><td>Current state</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Local Country</b></td><td>Categorical</td><td>Current country</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>University Email</b></td><td>Email</td><td>Official university email</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Permanent Address</b></td><td>Text</td><td>Home address</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Permanent City</b></td><td>Categorical</td><td>Home city</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Permanent Pincode</b></td><td>Numeric</td><td>Home pincode</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Permanent District</b></td><td>Categorical</td><td>Home district (35+ districts)</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Permanent Taluka</b></td><td>Categorical</td><td>Home taluka</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Permanent State</b></td><td>Categorical</td><td>Home state</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Permanent Country</b></td><td>Categorical</td><td>Home country</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Home Phone No</b></td><td>Phone</td><td>Landline number</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Mobile No</b></td><td>Phone</td><td>Primary mobile number</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Emergency No</b></td><td>Phone</td><td>Emergency contact number</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Phone NO</b></td><td>Phone</td><td>Alternate phone number</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Email</b></td><td>Email</td><td>Personal email address</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Guardian Name</b></td><td>Text</td><td>Parent/guardian name</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Guardian Address</b></td><td>Text</td><td>Guardian's address</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Guardian City</b></td><td>Categorical</td><td>Guardian's city</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Guardian Pincode</b></td><td>Numeric</td><td>Guardian's pincode</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Guardian Mobile NO</b></td><td>Phone</td><td>Guardian's mobile</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Guardian Phone NO</b></td><td>Phone</td><td>Guardian's phone</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Guardian Email</b></td><td>Email</td><td>Guardian's email</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Bloodgroup</b></td><td>Categorical</td><td>Blood group (A+, B+, O+, etc.)</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Marital Status</b></td><td>Binary</td><td>Married/Unmarried</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Student Status</b></td><td>Categorical</td><td>Current enrollment status</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Is Handicapped</b></td><td>Binary</td><td>Disability flag</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Disability</b></td><td>Text</td><td>Type of disability if any</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Photo Upload</b></td><td>Binary</td><td>Photo uploaded flag</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Fees Pending</b></td><td>Binary</td><td>Outstanding fees flag</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Total Fees</b></td><td>Numeric</td><td>₹18,000 or ₹27,000</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Received Fees</b></td><td>Numeric</td><td>Amount paid</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Pending Fees</b></td><td>Numeric</td><td>Amount outstanding</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Use Hostel</b></td><td>Binary</td><td>Hostel accommodation flag</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Detained</b></td><td>Binary</td><td>Academic detention flag</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Last Exam</b></td><td>Categorical</td><td>HSC (833) or SSC (9)</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Seat No</b></td><td>Text</td><td>Previous exam seat number</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Last Exam Percentage</b></td><td>Continuous</td><td>Marks 0-100%</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Percentile</b></td><td>Continuous</td><td>Percentile rank</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Last Exam Pass</b></td><td>Categorical</td><td>Passing year (e.g., 2022-23)</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Last Exam Board</b></td><td>Categorical</td><td>G.H.S.E.B, CBSE, GSEB, Other</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Specialization</b></td><td>Categorical</td><td>COMMERCE, SCIENCE, ARTS</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Last Institute Name</b></td><td>Text</td><td>Previous school/college name</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Last Institute City</b></td><td>Categorical</td><td>Previous institute city</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Last Institute State</b></td><td>Categorical</td><td>Previous institute state</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Last Institute Country</b></td><td>Categorical</td><td>Previous institute country</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Adhar Number</b></td><td>ID</td><td>Aadhaar card number</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Name as per adhar</b></td><td>Text</td><td>Name on Aadhaar card</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Mobile no as per adhar</b></td><td>Phone</td><td>Aadhaar linked mobile</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>B.E.D method</b></td><td>Categorical</td><td>Education method</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>ABCID</b></td><td>ID</td><td>Academic Bank of Credits ID</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>Admission Type</b></td><td>Categorical</td><td>Type of admission process</td></tr>
+            <tr style='background:#F9F9F9'><td style='padding:4px;border:1px solid #eee'><b>Churn Student</b></td><td>Target</td><td>Dropout status (Yes/No)</td></tr>
+            <tr><td style='padding:4px;border:1px solid #eee'><b>student_status_new</b></td><td>Target</td><td>active / dropout_sem1 / dropout_mid</td></tr>
           </table>
         </div>""", unsafe_allow_html=True)
         
