@@ -11,3 +11,7 @@ joblib
 plotly
 
 catboost
+
+shap
+
+matplotlib

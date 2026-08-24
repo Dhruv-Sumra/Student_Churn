@@ -14,10 +14,12 @@ def lazy_import_sklearn():
 
 import plotly.express as px
 import plotly.graph_objects as go
+import shap
+import matplotlib.pyplot as plt
 
 FOLDER = r""
 
-st.set_page_config(page_title="Students’ churn-based decision support system using machine learning and artificial intelligence", layout="wide",
+st.set_page_config(page_title=" Interpretable Student Churn Prediction Using Machine Learning with Adaptive Semester Weighting", layout="wide",
                    initial_sidebar_state="expanded")
 
 GOLD = "#C8A96E"
@@ -352,6 +354,18 @@ def rebuild_features(raw_df):
 @st.cache_data
 def load_raw():
     df = pd.read_csv(os.path.join(FOLDER,"latest.csv"))
+
+    # Clean values that may appear as "undefined" in Streamlit / Plotly.
+    # This only standardises missing text values and does not change model logic.
+    text_cols = df.select_dtypes(include=["object", "string"]).columns
+    if len(text_cols) > 0:
+        df[text_cols] = df[text_cols].replace(
+            to_replace=r"(?i)^\s*(undefined|null|none|nan|n/a|na)?\s*$",
+            value=np.nan,
+            regex=True
+        )
+        df[text_cols] = df[text_cols].fillna("Unknown")
+
     df["is_churned"]  = df["student_status_new"].apply(
         lambda x: 1 if "dropout" in str(x).lower() and "sem1" in str(x).lower() else 0)
     df["Churn Label"] = df["is_churned"].map({0:"Active",1:"Churned"})
@@ -1213,7 +1227,13 @@ elif "Model" in page:
             fig_cm=go.Figure(go.Heatmap(z=cm,x=["Pred: Active","Pred: Churned"],
                 y=["Actual: Active","Actual: Churned"],
                 text=cm,texttemplate="<b>%{text}</b>",textfont={"size":28},
-                colorscale=[[0,"#F0ECE4"],[1,NAVY]]))
+                colorscale=[[0,"#F0ECE4"],[1,NAVY]],
+                hovertemplate="Predicted: %{x}<br>Actual: %{y}<br>Count: %{z}<extra></extra>"))
+            fig_cm.update_layout(
+                title="",
+                xaxis_title="Predicted Class",
+                yaxis_title="Actual Class"
+            )
             tnr(fig_cm,320); st.plotly_chart(fig_cm, use_container_width=True)
             st.markdown(f"""<div style='display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px'>
               <div style='background:rgba(45,106,79,0.11);border-left:4px solid {GREEN};padding:10px;text-align:center'>
@@ -1235,10 +1255,17 @@ elif "Model" in page:
                 "Actual":["Churned" if v==1 else "Active" for v in y_test.values]})
             fig_pd=px.histogram(df_p,x="Score",color="Actual",nbins=30,
                 barmode="overlay",opacity=0.75,
-                color_discrete_map={"Active":GREEN,"Churned":RED})
+                color_discrete_map={"Active":GREEN,"Churned":RED},
+                labels={"Score":"Churn Probability Score", "count":"Count"})
             fig_pd.add_vline(x=thresh,line_dash="dash",line_color=GOLD,
                 annotation_text=f"Threshold {thresh:.2f}",annotation_font_color=GOLD,
                 annotation_font_size=13)
+            fig_pd.update_layout(
+                title="",
+                xaxis_title="Churn Probability Score",
+                yaxis_title="Count",
+                showlegend=True
+            )
             tnr(fig_pd,300); st.plotly_chart(fig_pd, use_container_width=True)
             section_header("Classification Report")
             rep=classification_report(y_test,all_preds,output_dict=True,zero_division=0)
@@ -1260,6 +1287,274 @@ elif "Model" in page:
             xaxis_title="False Positive Rate",yaxis_title="True Positive Rate")
         tnr(fig_roc,400); st.plotly_chart(fig_roc, use_container_width=True)
 
+        st.divider()
+        section_header("SHAP Analysis - Model Interpretability",
+                      "Understanding how features impact predictions")
+
+        with st.expander("What is SHAP?", expanded=False):
+            st.markdown(f"""<div style='font-size:13px;line-height:1.7;color:{NAVY}'>
+                <b>SHAP (SHapley Additive exPlanations)</b> helps explain how individual features influence the model's prediction.<br><br>
+                <b>Beeswarm Plot:</b> Each dot represents one student. The horizontal position shows whether a feature pushes the prediction more toward churn or toward active.<br><br>
+                <b>Positive SHAP value:</b> pushes prediction toward churn.<br>
+                <b>Negative SHAP value:</b> pushes prediction toward active.<br><br>
+                This makes the Random Forest model easier to understand instead of treating it only as a black-box model.
+            </div>""", unsafe_allow_html=True)
+
+        try:
+            with st.spinner("Computing SHAP values..."):
+
+                # ---------------------------------------------------------
+                # 1. Take a sample from test data
+                # ---------------------------------------------------------
+                sample_size = min(150, len(X_test))
+
+                sample_indices = np.random.RandomState(42).choice(
+                    len(X_test),
+                    sample_size,
+                    replace=False
+                )
+
+                X_sample = X_test.iloc[sample_indices].copy()
+
+
+                # ---------------------------------------------------------
+                # 2. Scale data exactly as model expects
+                # ---------------------------------------------------------
+                X_sample_scaled = scaler.transform(X_sample)
+
+                # Convert back to DataFrame so feature names are preserved
+                X_sample_scaled_df = pd.DataFrame(
+                    X_sample_scaled,
+                    columns=X_sample.columns,
+                    index=X_sample.index
+                )
+
+
+                # ---------------------------------------------------------
+                # 3. Create SHAP TreeExplainer
+                # ---------------------------------------------------------
+                explainer = shap.TreeExplainer(model)
+
+                shap_values = explainer.shap_values(X_sample_scaled_df)
+
+
+                # ---------------------------------------------------------
+                # 4. FIX SHAP OUTPUT SHAPE
+                # ---------------------------------------------------------
+
+                # Older SHAP:
+                # [class_0_array, class_1_array]
+                if isinstance(shap_values, list):
+
+                    if len(shap_values) == 2:
+                        shap_values_churn = shap_values[1]
+                    else:
+                        shap_values_churn = shap_values[0]
+
+                else:
+                    shap_values = np.asarray(shap_values)
+
+                    # Newer SHAP RandomForest output:
+                    # (samples, features, classes)
+                    if shap_values.ndim == 3:
+
+                        # Select class 1 = Churned
+                        if shap_values.shape[2] >= 2:
+                            shap_values_churn = shap_values[:, :, 1]
+                        else:
+                            shap_values_churn = shap_values[:, :, 0]
+
+                    elif shap_values.ndim == 2:
+
+                        shap_values_churn = shap_values
+
+                    else:
+                        raise ValueError(
+                            f"Unexpected SHAP output shape: {shap_values.shape}"
+                        )
+
+
+                # Force final SHAP matrix to proper 2D shape
+                shap_values_churn = np.asarray(shap_values_churn)
+
+                if shap_values_churn.ndim != 2:
+                    shap_values_churn = np.squeeze(shap_values_churn)
+
+                if shap_values_churn.ndim != 2:
+                    raise ValueError(
+                        f"SHAP values could not be converted to 2D. "
+                        f"Current shape: {shap_values_churn.shape}"
+                    )
+
+
+                # ---------------------------------------------------------
+                # 5. SHAP BEESWARM / SUMMARY PLOT
+                # ---------------------------------------------------------
+                st.markdown(
+                    f"""
+                    <div style='font-size:14px;font-weight:600;
+                    color:{NAVY};margin:15px 0 10px 0'>
+                    SHAP Beeswarm Plot - Top 15 Features
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown("""
+                <div style='font-size:12px;color:#666;margin-bottom:10px'>
+                    Each dot = one student |
+                    Left/Right position = impact on prediction |
+                    Color = feature value
+                </div>
+                """, unsafe_allow_html=True)
+
+
+                fig_shap = plt.figure(figsize=(10, 8))
+
+                shap.summary_plot(
+                    shap_values_churn,
+                    X_sample_scaled_df,
+                    feature_names=list(X_sample.columns),
+                    plot_type="dot",
+                    max_display=15,
+                    show=False
+                )
+
+                plt.xlabel(
+                    "SHAP Value (Impact on Churn Prediction)",
+                    fontsize=11
+                )
+
+                plt.tight_layout()
+
+                st.pyplot(plt.gcf(), use_container_width=True)
+
+                plt.close("all")
+
+
+                # ---------------------------------------------------------
+                # 6. CALCULATE MEAN ABSOLUTE SHAP IMPORTANCE
+                # ---------------------------------------------------------
+                mean_shap = np.mean(
+                    np.abs(shap_values_churn),
+                    axis=0
+                )
+
+                # IMPORTANT:
+                # Convert to a flat 1D array
+                mean_shap = np.asarray(mean_shap).flatten()
+
+                feature_names = list(X_sample.columns)
+
+
+                # Check dimensions before making DataFrame
+                if len(mean_shap) != len(feature_names):
+                    raise ValueError(
+                        f"Feature count mismatch: "
+                        f"{len(feature_names)} feature names but "
+                        f"{len(mean_shap)} SHAP importance values."
+                    )
+
+
+                shap_importance = pd.DataFrame({
+                    "Feature": feature_names,
+                    "Importance": mean_shap
+                })
+
+                shap_importance = (
+                    shap_importance
+                    .sort_values("Importance", ascending=False)
+                    .head(10)
+                )
+
+
+                # ---------------------------------------------------------
+                # 7. TOP 10 SHAP FEATURE IMPORTANCE
+                # ---------------------------------------------------------
+                st.markdown(
+                    f"""
+                    <div style='font-size:14px;font-weight:600;
+                    color:{NAVY};margin:20px 0 10px 0'>
+                    Top 10 Most Important Features by Mean |SHAP|
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+
+                fig_importance = go.Figure(
+                    go.Bar(
+                        x=shap_importance["Importance"],
+                        y=shap_importance["Feature"],
+                        orientation="h",
+                        marker=dict(
+                            color=shap_importance["Importance"],
+                            colorscale=[
+                                [0, GREEN],
+                                [0.5, AMBER],
+                                [1, RED]
+                            ],
+                            showscale=False
+                        ),
+                        text=shap_importance["Importance"].round(4),
+                        textposition="outside",
+                        textfont=dict(size=11)
+                    )
+                )
+
+                fig_importance.update_layout(
+                    title="",
+                    xaxis_title="Mean |SHAP Value| (Average Impact on Prediction)",
+                    yaxis_title="",
+                    yaxis=dict(
+                        categoryorder="total ascending",
+                        title=""
+                    ),
+                    height=430,
+                    showlegend=False,
+                    margin=dict(
+                        l=180,
+                        r=70,
+                        t=30,
+                        b=50
+                    )
+                )
+
+                tnr(fig_importance, 430)
+
+                st.plotly_chart(
+                    fig_importance,
+                    use_container_width=True
+                )
+
+
+                # ---------------------------------------------------------
+                # 8. SIMPLE EXPLANATION
+                # ---------------------------------------------------------
+                chart_insight(
+                    "How to Read SHAP Analysis",
+                    "Features with larger Mean |SHAP| values have a greater "
+                    "overall influence on the Random Forest predictions. "
+                    "In the beeswarm plot, values on the positive side push "
+                    "the model more toward churn, while values on the negative "
+                    "side push the prediction more toward active status."
+                )
+
+
+        except Exception as e:
+
+            st.error(
+                f"Could not generate SHAP analysis: {str(e)}"
+            )
+
+            import traceback
+
+            st.code(traceback.format_exc())
+
+            st.info(
+                "SHAP analysis requires a compatible tree-based model "
+                "such as Random Forest."
+            )
     with t2:
         section_header("Predict Churn Risk for a Student",
                         "32 admission features + adaptive semester signal")
