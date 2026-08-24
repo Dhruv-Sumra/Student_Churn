@@ -446,7 +446,7 @@ if not LOADED:
 #  I. INTRODUCTION
 # ================================================================
 if "Introduction" in page:
-    st.title("Students’ churn-based decision support system using machine learning and artificial intelligence")
+    st.title("Interpretable Student Churn Prediction Using Machine Learning with Adaptive Semester Weighting")
     st.markdown("<p style='font-size:15px;color:#5C6B7A;font-style:italic;margin-bottom:20px'>"
                 "Predicting student dropout in BCA using machine learning -- Batch 2023-24.</p>",
                 unsafe_allow_html=True)
